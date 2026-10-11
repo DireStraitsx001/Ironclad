@@ -9,6 +9,14 @@ else
 	else
 	  export DEBIAN_LOCATION="http://deb.debian.org/debian/"
 	fi
+	# Bind essential host filesystems into chroot for networking
+	sudo mkdir -p Arkbuild{/dev/pts,/proc,/sys,/run}
+	sudo mount --bind /dev Arkbuild/dev
+	sudo mount --bind /dev/pts Arkbuild/dev/pts
+	sudo mount -t devpts devpts Arkbuild/dev/pts -o newinstance,ptmxmode=0666,mode=0620,gid=5
+	sudo mount -t proc proc Arkbuild/proc
+	sudo mount --rbind /sys Arkbuild/sys
+	sudo mount --bind /run Arkbuild/run
 	# Bootstrap base system
 	sudo eatmydata debootstrap --no-check-gpg --include=eatmydata --resolve-deps --arch=arm64 --foreign ${DEBIAN_CODE_NAME} Arkbuild ${DEBIAN_LOCATION}
 	sudo cp /usr/bin/qemu-aarch64-static Arkbuild/usr/bin/
@@ -25,15 +33,22 @@ else
 	  sudo chroot Arkbuild/ eatmydata apt-get -y install libc6:armhf liblzma5:armhf libasound2t64:armhf libfreetype6:armhf libxkbcommon-x11-0:armhf libudev1:armhf libudev0:armhf libgbm1:armhf libstdc++6:armhf
 	fi
 	sudo cat Arkbuild/etc/os-release | grep "^DEBIAN_VERSION_FULL=" | cut -d'=' -f2 > Arkbuild_package_cache/debian_${DEBIAN_CODE_NAME}_rootfs.commit
+	sudo umount -l Arkbuild/dev/pts
+	sudo umount -l Arkbuild/dev
+	sudo umount -l Arkbuild/proc
+	sudo umount -l Arkbuild/sys
+	sudo umount -l Arkbuild/run
 	sudo tar -cvpzf Arkbuild_package_cache/debian_${DEBIAN_CODE_NAME}_rootfs.tar.gz Arkbuild/
 fi
 
 # Bind essential host filesystems into chroot for networking
+sudo mkdir -p Arkbuild{/dev/pts,/proc,/sys,/run}
 sudo mount --bind /dev Arkbuild/dev
+sudo mount --bind /dev/pts Arkbuild/dev/pts
 sudo mount -t devpts none Arkbuild/dev/pts -o newinstance,ptmxmode=0666
-#sudo mount --bind /dev/pts Arkbuild/dev/pts -o newinstance,ptmxmode=0666
 sudo mount --bind /proc Arkbuild/proc
 sudo mount --bind /sys Arkbuild/sys
+sudo mount --bind /run Arkbuild/run
 echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee Arkbuild/etc/resolv.conf > /dev/null
 
 # Avoid service autostarts

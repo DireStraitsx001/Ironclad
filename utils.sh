@@ -8,7 +8,7 @@ git config --global http.postBuffer 524288000
 
 # Verify the correct toolchain is available
 OPT_TOOLCHAIN_DIR="/opt/toolchains/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
-LOCAL_TOOLCHAIN_DIR="prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
+LOCAL_TOOLCHAIN_DIR="${PWD}/prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
 
 if [ -d "$OPT_TOOLCHAIN_DIR" ]; then
   echo "Using existing system-wide toolchain at $OPT_TOOLCHAIN_DIR"
@@ -101,11 +101,13 @@ function setup_arkbuild32() {
     sudo chroot Arkbuild32/ eatmydata /debootstrap/debootstrap --second-stage
 
     # Bind essential host filesystems into chroot for networking
+	sudo mkdir -p Arkbuild32{/dev/pts,/proc,/sys,/run}
     sudo mount --bind /dev Arkbuild32/dev
-    sudo mount -t devpts none Arkbuild32/dev/pts -o newinstance,ptmxmode=0666
-    #sudo mount --bind /dev/pts Arkbuild32/dev/pts
-    sudo mount --bind /proc Arkbuild32/proc
+    sudo mount --bind /dev/pts Arkbuild32/dev/pts
+    sudo mount -t devpts devpts Arkbuild32/dev/pts -o newinstance,ptmxmode=0666
+	sudo mount -t proc proc Arkbuild32/proc
     sudo mount --bind /sys Arkbuild32/sys
+	sudo mount --bind /run Arkbuild32/run
     echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee Arkbuild32/etc/resolv.conf > /dev/null
     # Install libmali, DRM, and GBM libraries for rk3326 or rk3566
     sudo chroot Arkbuild32/ apt install -y libdrm-dev libgbm1
@@ -136,7 +138,7 @@ function setup_arkbuild32() {
 }
 
 function remove_arkbuild() {
-  for m in home/ark/Arkbuild_ccache proc dev/pts dev dev sys
+  for m in home/ark/Arkbuild_ccache proc dev/pts dev dev sys run
   do
     if grep -qs "Arkbuild/${m} " /proc/mounts; then
       sudo umount -l Arkbuild/${m}
@@ -152,7 +154,7 @@ function remove_arkbuild() {
 }
 
 function remove_arkbuild32() {
-  for m in home/ark/Arkbuild_ccache proc dev/pts dev sys
+  for m in home/ark/Arkbuild_ccache proc dev/pts dev sys run
   do
     if grep -qs "Arkbuild32/${m} " /proc/mounts; then
       sudo umount -l Arkbuild32/${m}
