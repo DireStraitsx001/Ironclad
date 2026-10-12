@@ -101,13 +101,13 @@ function setup_arkbuild32() {
     sudo chroot Arkbuild32/ eatmydata /debootstrap/debootstrap --second-stage
 
     # Bind essential host filesystems into chroot for networking
-	sudo mkdir -p Arkbuild32{/dev/pts,/proc,/sys,/run}
+	sudo mkdir -p Arkbuild32{/dev/pts,/proc,/sys}
     sudo mount --bind /dev Arkbuild32/dev
-    sudo mount --bind /dev/pts Arkbuild32/dev/pts
+    #sudo mount --bind /dev/pts Arkbuild32/dev/pts
     sudo mount -t devpts devpts Arkbuild32/dev/pts -o newinstance,ptmxmode=0666
 	sudo mount -t proc proc Arkbuild32/proc
     sudo mount --bind /sys Arkbuild32/sys
-	sudo mount --bind /run Arkbuild32/run
+	#sudo mount --bind /run Arkbuild32/run
     echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee Arkbuild32/etc/resolv.conf > /dev/null
     # Install libmali, DRM, and GBM libraries for rk3326 or rk3566
     sudo chroot Arkbuild32/ apt install -y libdrm-dev libgbm1

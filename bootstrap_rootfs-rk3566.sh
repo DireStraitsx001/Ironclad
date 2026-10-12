@@ -43,13 +43,13 @@ else
 fi
 
 # Bind essential host filesystems into chroot for networking
-sudo mkdir -p Arkbuild{/dev/pts,/proc,/sys,/run}
+sudo mkdir -p Arkbuild{/dev/pts,/proc,/sys}
 sudo mount --bind /dev Arkbuild/dev
-sudo mount --bind /dev/pts Arkbuild/dev/pts
+#sudo mount --bind /dev/pts Arkbuild/dev/pts
 sudo mount -t devpts none Arkbuild/dev/pts -o newinstance,ptmxmode=0666
 sudo mount --bind /proc Arkbuild/proc
 sudo mount --bind /sys Arkbuild/sys
-sudo mount --bind /run Arkbuild/run
+#sudo mount --bind /run Arkbuild/run
 echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee Arkbuild/etc/resolv.conf > /dev/null
 
 # Avoid service autostarts
