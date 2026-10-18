@@ -18,3 +18,4 @@ snes9x2005
 uae4arm
 yabasanshiro
 yabause
+yabadabadoo

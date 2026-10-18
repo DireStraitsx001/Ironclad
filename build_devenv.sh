@@ -179,5 +179,9 @@ sudo chroot ${CHROOT_DIR}/ bash -c "cd /home/ark &&
   cp -L src/*.h /usr/include/go2/
   "
 
+# Add GCC-14 and G++-14 as available alternatives
+sudo chroot ${CHROOT_DIR}/ bash -c "update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 -20"
+sudo chroot ${CHROOT_DIR}/ bash -c "update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 -20"
+
 echo "Development environment build completed. It can be entered by issuing command sudo chroot ${CHROOT_DIR}."
 ) 2>&1 | tee -a builddevenv.log

@@ -4,7 +4,6 @@
 sudo mv -fv Arkbuild/opt/retroarch/bin/retroarch.${UNIT}v4 /tmp/${UNIT}v4/.
 sudo mv -fv Arkbuild/opt/retroarch/bin/retroarch32.${UNIT}v4 /tmp/${UNIT}v4/.
 sudo mv -fv Arkbuild/usr/lib/arm-linux-gnueabihf/libSDL2-2.0.so.0.$extension.${UNIT}v4 /tmp/${UNIT}v4/libSDL2-2.0.so.0.$extension.${UNIT}v4.32
-mkdir -p /tmp/${UNIT}v4/boot
 sync Arkbuild
 sudo dd if="${FILESYSTEM}" of="${DISK}" bs=512 seek="${STORAGE_PART_START}" conv=fsync,notrunc
 sync ${DISK}
@@ -25,6 +24,7 @@ sudo rm -fv /tmp/a10v4-boot/rg351mp-uboot.dtb
 sudo mv -fv /tmp/${UNIT}v4/${UNIT}v4-uboot.dtb /tmp/a10v4-boot/rg351mp-uboot.dtb
 sudo rm -fv /tmp/a10v4-boot/boot.ini
 sudo cp -fv logos/rotated/${UNIT}v4/logo.bmp /tmp/a10v4-boot/.
+sudo sed -i 's/a10mini-linux/a10mini-v4-linux/g' /tmp/a10v4-boot/expandtoexfat.sh
 cat <<EOF | sudo tee /tmp/a10v4-boot/boot.ini
 odroidgoa-uboot-config
 
