@@ -1,0 +1,11 @@
+name: IRONCLAD source checks
+on:
+  push:
+    branches: ['ironclad/**']
+  workflow_dispatch:
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ironclad/check-source.sh

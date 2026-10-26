@@ -31,6 +31,7 @@ source ./prepare.sh
 # Step-by-step build process
 source ./setup_partition-rk3566.sh
 source ./bootstrap_rootfs-rk3566.sh
+source ./ironclad/prepare-branding.sh || exit 1
 source ./build_kernel-rk3566.sh
 source ./build_deps.sh
 source ./build_sdl2.sh
@@ -83,9 +84,11 @@ if [[ "${BUILD_KODI}" == "y" ]]; then
   source ./build_kodi.sh
 fi
 source ./finishing_touches-rk3566.sh
+source ./ironclad/integrate-image.sh || exit 1
 source ./cleanup_filesystem.sh
 source ./write_rootfs-rk3566.sh
 source ./clean_mounts.sh
+source ./ironclad/rename-image.sh || exit 1
 source ./create_image.sh
 ) 2>&1 | tee -a build.log
 
