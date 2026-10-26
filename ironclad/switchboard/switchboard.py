@@ -5,7 +5,7 @@ Read-only. Never launches/kills games or auto-loads save states.
 import json,os,re,sys,subprocess
 from pathlib import Path
 MAX=2*1024*1024
-STATE=re.compile(r'\\.state(?:\\.auto|\\d+)?$',re.I)
+STATE=re.compile(r'\.state(?:\.auto|\d+)?$',re.I)
 def parse(home=Path('/home/ark'),tf2=Path('/roms2')):
     out=[];seen=set()
     sources=[home/'.config/retroarch/content_history.lpl',home/'.config/retroarch32/content_history.lpl',
@@ -19,7 +19,7 @@ def parse(home=Path('/home/ark'),tf2=Path('/roms2')):
         for item in items:
             if not isinstance(item,dict):continue
             raw=item.get('path')
-            if not isinstance(raw,str) or not raw.startswith('/') or '\\x00' in raw or '\\n' in raw:continue
+            if not isinstance(raw,str) or not raw.startswith('/') or '\x00' in raw or '\n' in raw:continue
             if raw.startswith('/roms/'):raw=str(tf2)+raw[5:]
             path=Path(raw)
             try: rel=path.relative_to(tf2)
@@ -61,7 +61,7 @@ def main():
     index=int(result.stderr.strip())-1
     if 0<=index<len(entries):
         e=entries[index]
-        msg=e['label']+'\\n\\n'+e['path']+'\\n\\nState filename detected: '+str(e['state_file_present'])+'\\nCompatibility NOT verified. No game launched.'
+        msg=e['label']+'\n\n'+e['path']+'\n\nState filename detected: '+str(e['state_file_present'])+'\nCompatibility NOT verified. No game launched.'
         subprocess.run([str(dialog),'--msgbox',msg,'17','70'],check=False)
 if __name__=='__main__':
     try: main()
