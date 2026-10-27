@@ -91,6 +91,12 @@ source ./clean_mounts.sh
 source ./ironclad/rename-image.sh || exit 1
 source ./create_image.sh
 ) 2>&1 | tee -a build.log
-
-echo "RG353V build completed. Final image is ready."
+build_rc=${PIPESTATUS[0]}
+if (( build_rc != 0 )); then
+  echo "[IRONCLAD] ERROR: RG353V build script exited with status $build_rc" | tee -a build.log
+  exit "$build_rc"
+fi
+# Some legacy upstream build stages are not strict-fail; a zero exit here
+# does not by itself prove all packages compiled or the firmware boots.
+echo "[IRONCLAD] RG353V build steps returned status 0; inspect build.log and test the image before release." | tee -a build.log
 
