@@ -110,6 +110,7 @@ def copy_unchanged(source: Path, destination: Path, tf2: Path) -> None:
     if not pf.regular_under(source, tf2):
         raise ValueError("Unsafe state path")
     fd = os.open(source, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    destination_created = False
     try:
         with os.fdopen(fd, "rb") as src:
             before = os.fstat(src.fileno())
@@ -118,6 +119,7 @@ def copy_unchanged(source: Path, destination: Path, tf2: Path) -> None:
             if shutil.disk_usage(destination.parent).free < before.st_size + SPACE_RESERVE:
                 raise ValueError("Insufficient space for an isolated state copy")
             dst = os.open(destination, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            destination_created = True
             with os.fdopen(dst, "wb") as out:
                 original_hash = hashlib.sha256()
                 count = 0
@@ -139,7 +141,8 @@ def copy_unchanged(source: Path, destination: Path, tf2: Path) -> None:
                 if hashlib.file_digest(check, "sha256").digest() != original_hash.digest():
                     raise ValueError("State copy verification failed")
     except BaseException:
-        destination.unlink(missing_ok=True)
+        if destination_created:
+            destination.unlink(missing_ok=True)
         raise
 
 
