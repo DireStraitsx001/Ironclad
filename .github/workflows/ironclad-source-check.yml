@@ -3,6 +3,8 @@ on:
   push:
     branches: ['ironclad/**']
   workflow_dispatch:
+  pull_request:
+    branches: ['ironclad/1.0']
 jobs:
   source:
     runs-on: ubuntu-24.04
