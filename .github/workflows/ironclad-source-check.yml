@@ -18,3 +18,5 @@ jobs:
         run: python3 -m unittest discover -v -s ironclad/stability -p 'test_*.py'
       - name: Switchboard and safe resume unit tests
         run: python3 -m unittest discover -v -s ironclad/switchboard -p 'test_*.py'
+      - name: Disposable RG353V image-hook staging test
+        run: bash ironclad/tests/test_integration_staging.sh
