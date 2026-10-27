@@ -1,9 +1,29 @@
-# IRONCLAD Switchboard (experimental preview)
+# IRONCLAD Safe Resume Preflight — development preview
 
-The [OnionOS GameSwitcher](https://github.com/OnionUI/Onion/tree/main/src/gameSwitcher) inspired this interaction. Onion's Miyoo-specific SDL and launcher code cannot simply run on RG353V. This is independently written code: no Onion assets or code copied. Onion upstream is GPLv3; future direct reuse must honor its terms.
+A conservative, optional companion to Switchboard. This does **not** launch,
+resume, pause, kill, or automatically save any game. It only reports RetroArch
+history entries on a distinctly mounted TF2 (/roms2), and identifies whether
+a conventional single save-state candidate can be found.
 
-Current preview reads RetroArch history and displays recent *TF2-only* ROMs. It detects possible state filenames but does not assume compatibility or launch an emulator. It is not Onion's live GameSwitcher, not an auto-save-on-exit system, and not currently automatically installed. No background services. No save/ROM writes.
+It requires a regular TF2 ROM, an existing core matching recorded core_path,
+an explicit TF2 savestate_directory in RetroArch configuration, and exactly
+one plausible bounded save-state file. A reviewable result does not establish
+core-version compatibility or guarantee successful restoration.
 
-Roadmap: trace dArkOS per-emulator launch wrappers; implement opt-in per-core save confirmations and quick-resume; verify on a disposable TF1 card before enabling any automatic session changes.
+Most stock dArkOS installations may report blocked because save-state
+directories are not explicitly configured on TF2. This is intentional.
 
-Standalone tests: `python3 ironclad/switchboard/test_switchboard.py`.
+Commands, from your source tree on a test machine:
+  python3 ironclad/switchboard/resume_preflight.py
+  python3 ironclad/switchboard/resume_preflight.py --json
+
+Optional experimental snapshot: --snapshot N, followed by typing SNAPSHOT.
+This copies a state to a private separate file on TF1; it does not restore it,
+and never changes the TF2 original. The feature is not hardware-tested.
+Snapshots consume TF1 space. No automatic emulator launches or writes to TF2.
+
+This branch is NOT installed in the firmware image. Validate with disposable
+cards before future integration.
+
+Run unit tests:
+  python3 -m unittest discover -v -s ironclad/switchboard -p 'test_*.py'
