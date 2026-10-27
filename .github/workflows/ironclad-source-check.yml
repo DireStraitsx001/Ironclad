@@ -20,3 +20,5 @@ jobs:
         run: python3 -m unittest discover -v -s ironclad/switchboard -p 'test_*.py'
       - name: Disposable RG353V image-hook staging test
         run: bash ironclad/tests/test_integration_staging.sh
+      - name: Verify referenced RG353V build and integration files
+        run: python3 -m unittest discover -v -s ironclad/tests -p 'test_*.py'
